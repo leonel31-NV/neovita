@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Login + Monitoramento</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #login, #monitor {
+      display: none;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    #monitor {
+      display: none;
+    }
+
+    input[type="password"] {
+      padding: 10px;
+      width: 200px;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #volume {
+      font-size: 36px;
+      color: #007bff;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tela de login -->
+  <img src="logoneovita.jpg" alt="Logo" style="width: 240px; margin-bottom: 20px;">
+  <div id="login">
+    <h2>Login</h2>
+    <input type="password" id="senha" placeholder="Digite a senha" />
+    <br>
+    <button onclick="verificarSenha()">Entrar</button>
+    <p id="erro" style="color:red; display:none;">Senha incorreta!</p>
+  </div>
+
+  <!-- Tela de monitoramento -->
+  <div id="monitor">
+    <h1>Volume no Leito 1</h1>
+    <div id="volume">Carregando...</div>
+  </div>
+
+  <script>
+    // Mostra a tela de login ao carregar
+    document.getElementById("login").style.display = "block";
+
+    function verificarSenha() {
+      const senha = document.getElementById("senha").value;
+      if (senha === "neovita") {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("monitor").style.display = "block";
+        iniciarMonitoramento();
+      } else {
+        document.getElementById("erro").style.display = "block";
+      }
+    }
+
+    function iniciarMonitoramento() {
+      const url = "https://neovita-b905d-default-rtdb.firebaseio.com/leito1/volume_litros.json";
+
+      async function buscarVolume() {
+        try {
+          const resposta = await fetch(url);
+          const volume = await resposta.json();
+          document.getElementById("volume").textContent = volume + " litros";
+        } catch (e) {
+          document.getElementById("volume").textContent = "Erro ao carregar";
+        }
+      }
+
+      buscarVolume(); // Chamada inicial
+      setInterval(buscarVolume, 500); // A cada 0.5s
+    }
+  </script>
+
+</body>
+</html>
